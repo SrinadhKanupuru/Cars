@@ -1,0 +1,290 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Role {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique @db.VarChar(50)
+  description String?
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  users       User[]
+
+  @@map("roles")
+}
+
+model User {
+  id               Int              @id @default(autoincrement())
+  name             String           @db.VarChar(100)
+  email            String           @unique @db.VarChar(255)
+  passwordHash     String           @map("password_hash") @db.VarChar(255)
+  roleId           Int              @map("role_id")
+  phone            String?          @db.VarChar(50)
+  avatar           String?
+  status           String?          @default("ACTIVE") @db.VarChar(20)
+  createdAt        DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime?        @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  customers        Customer?
+  leads            Lead[]
+  notifications    Notification[]
+  orders           Order[]
+  payments         Payment[]
+  service_bookings ServiceBooking[]
+  test_drives      TestDrive[]
+  role             Role             @relation(fields: [roleId], references: [id], onUpdate: NoAction)
+  wishlists        Wishlist?
+
+  @@index([email], map: "idx_users_email")
+  @@index([roleId], map: "idx_users_role_id")
+  @@map("users")
+}
+
+model Car {
+  id            String         @id @db.VarChar(100)
+  brand         String         @db.VarChar(100)
+  model         String         @db.VarChar(150)
+  tagline       String?
+  year          Int
+  price         Decimal        @db.Decimal(15, 2)
+  mileage       String?        @db.VarChar(50)
+  horsepower    Int
+  engine        String         @db.VarChar(255)
+  transmission  String         @db.VarChar(100)
+  drivetrain    String?        @db.VarChar(100)
+  fuelType      String?        @map("fuel_type") @db.VarChar(50)
+  zeroToHundred String?        @map("zero_to_hundred") @db.VarChar(20)
+  topSpeed      String?        @map("top_speed") @db.VarChar(50)
+  torque        String?        @db.VarChar(50)
+  bodyType      String?        @map("body_type") @db.VarChar(50)
+  exteriorColor String?        @map("exterior_color") @db.VarChar(100)
+  interiorColor String?        @map("interior_color") @db.VarChar(100)
+  vin           String         @unique @db.VarChar(50)
+  description   String?
+  status        String?        @default("AVAILABLE") @db.VarChar(20)
+  isFeatured    Boolean?       @default(false) @map("is_featured")
+  isNewArrival  Boolean?       @default(false) @map("is_new_arrival")
+  rating        Decimal?       @default(5.00) @db.Decimal(3, 2)
+  createdAt     DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime?      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  features      CarFeature[]
+  images        CarImage[]
+  leads         Lead[]
+  orders        Order[]
+  testDrives    TestDrive[]
+  wishlistItems WishlistItem[]
+
+  @@index([brand], map: "idx_cars_brand")
+  @@index([horsepower], map: "idx_cars_horsepower")
+  @@index([price], map: "idx_cars_price")
+  @@index([status], map: "idx_cars_status")
+  @@index([year], map: "idx_cars_year")
+  @@map("cars")
+}
+
+model CarImage {
+  id           Int       @id @default(autoincrement())
+  carId        String    @map("car_id") @db.VarChar(100)
+  imageUrl     String    @map("image_url")
+  is_primary   Boolean?  @default(false)
+  displayOrder Int?      @default(0) @map("display_order")
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  car          Car       @relation(fields: [carId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([carId], map: "idx_car_images_car_id")
+  @@map("car_images")
+}
+
+model CarFeature {
+  id           Int       @id @default(autoincrement())
+  carId        String    @map("car_id") @db.VarChar(100)
+  feature_name String    @db.VarChar(255)
+  createdAt    DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  car          Car       @relation(fields: [carId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([carId], map: "idx_car_features_car_id")
+  @@map("car_features")
+}
+
+model Customer {
+  id              Int       @id @default(autoincrement())
+  userId          Int       @unique @map("user_id")
+  membershipTier  String?   @default("Gold Apex Collector") @map("membership_tier") @db.VarChar(50)
+  total_purchases Int?      @default(0)
+  total_spent     Decimal?  @default(0) @db.Decimal(15, 2)
+  address         String?
+  city            String?   @db.VarChar(100)
+  country         String?   @db.VarChar(100)
+  preferredBrands String?   @map("preferred_brands")
+  notes           String?
+  createdAt       DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("customers")
+}
+
+model TestDrive {
+  id             Int       @id @default(autoincrement())
+  customer_id    Int
+  carId          String    @map("car_id") @db.VarChar(100)
+  preferred_date DateTime  @db.Date
+  preferred_time String    @db.VarChar(50)
+  location       String?   @default("Beverly Hills Private Circuit") @db.VarChar(200)
+  instructor     String?   @default("Jean-Pierre Laurent (Master Instructor)") @db.VarChar(100)
+  message        String?
+  status         String?   @default("PENDING") @db.VarChar(30)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  car            Car       @relation(fields: [carId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          User      @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([customer_id], map: "idx_test_drives_customer_id")
+  @@index([status], map: "idx_test_drives_status")
+  @@map("test_drives")
+}
+
+model Lead {
+  id          Int       @id @default(autoincrement())
+  customer_id Int?
+  car_id      String?   @db.VarChar(100)
+  name        String    @db.VarChar(100)
+  email       String    @db.VarChar(255)
+  phone       String?   @db.VarChar(50)
+  message     String?
+  source      String?   @default("Website VIP Form") @db.VarChar(50)
+  budget      Decimal?  @db.Decimal(15, 2)
+  priority    String?   @default("High") @db.VarChar(20)
+  status      String?   @default("NEW") @db.VarChar(30)
+  assigned_to String?   @db.VarChar(100)
+  notes       String?
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  cars        Car?      @relation(fields: [car_id], references: [id], onUpdate: NoAction)
+  users       User?     @relation(fields: [customer_id], references: [id], onUpdate: NoAction)
+
+  @@index([status], map: "idx_leads_status")
+  @@map("leads")
+}
+
+model Order {
+  id                 Int       @id @default(autoincrement())
+  orderNumber        String    @unique @map("order_number") @db.VarChar(50)
+  customerId         Int       @map("customer_id")
+  carId              String    @map("car_id") @db.VarChar(100)
+  vin                String?   @db.VarChar(50)
+  amount             Decimal   @db.Decimal(15, 2)
+  deposit_paid       Decimal?  @default(0) @db.Decimal(15, 2)
+  deliveryAddress    String?   @map("delivery_address")
+  estimated_delivery DateTime? @db.Date
+  status             String?   @default("PENDING") @db.VarChar(30)
+  paymentStatus      String?   @default("PENDING") @map("payment_status") @db.VarChar(30)
+  notes              String?
+  createdAt          DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  car                Car       @relation(fields: [carId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  customer           User      @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  payments           Payment[]
+
+  @@index([customerId], map: "idx_orders_customer_id")
+  @@index([status], map: "idx_orders_status")
+  @@map("orders")
+}
+
+model Payment {
+  id                    Int       @id @default(autoincrement())
+  orderId               Int       @map("order_id")
+  customer_id           Int
+  amount                Decimal   @db.Decimal(15, 2)
+  paymentMethod         String    @map("payment_method") @db.VarChar(50)
+  status                String?   @default("PENDING") @db.VarChar(30)
+  transaction_reference String    @unique @db.VarChar(100)
+  notes                 String?
+  createdAt             DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at            DateTime? @default(now()) @db.Timestamptz(6)
+  users                 User      @relation(fields: [customer_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  order                 Order     @relation(fields: [orderId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([orderId], map: "idx_payments_order_id")
+  @@map("payments")
+}
+
+model Service {
+  id          Int              @id @default(autoincrement())
+  title       String           @db.VarChar(150)
+  category    String           @db.VarChar(100)
+  short_desc  String?
+  full_desc   String?
+  price_range String?          @db.VarChar(100)
+  timeline    String?          @db.VarChar(100)
+  icon        String?          @db.VarChar(50)
+  is_active   Boolean?         @default(true)
+  createdAt   DateTime?        @default(now()) @map("created_at") @db.Timestamptz(6)
+  updated_at  DateTime?        @default(now()) @db.Timestamptz(6)
+  bookings    ServiceBooking[]
+
+  @@map("services")
+}
+
+model ServiceBooking {
+  id             Int       @id @default(autoincrement())
+  user_id        Int?
+  serviceId      Int       @map("service_id")
+  customer_name  String    @db.VarChar(100)
+  customer_email String    @db.VarChar(255)
+  customer_phone String?   @db.VarChar(50)
+  carModel       String    @map("car_model") @db.VarChar(150)
+  scheduled_date DateTime  @db.Date
+  bay_number     String?   @db.VarChar(50)
+  technician     String?   @db.VarChar(100)
+  notes          String?
+  status         String?   @default("PENDING") @db.VarChar(30)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  service        Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users          User?     @relation(fields: [user_id], references: [id], onUpdate: NoAction)
+
+  @@index([status], map: "idx_service_bookings_status")
+  @@map("service_bookings")
+}
+
+model Wishlist {
+  id        Int            @id @default(autoincrement())
+  userId    Int            @unique @map("user_id")
+  createdAt DateTime?      @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime?      @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  items     WishlistItem[]
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@map("wishlists")
+}
+
+model WishlistItem {
+  id         Int       @id @default(autoincrement())
+  wishlistId Int       @map("wishlist_id")
+  carId      String    @map("car_id") @db.VarChar(100)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  car        Car       @relation(fields: [carId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  wishlist   Wishlist  @relation(fields: [wishlistId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([wishlistId, carId])
+  @@index([wishlistId], map: "idx_wishlist_items_wishlist_id")
+  @@map("wishlist_items")
+}
+
+model Notification {
+  id        Int       @id @default(autoincrement())
+  user_id   Int
+  title     String    @db.VarChar(200)
+  message   String
+  type      String?   @default("INFO") @db.VarChar(50)
+  isRead    Boolean?  @default(false) @map("is_read")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz(6)
+  users     User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([user_id, isRead], map: "idx_notifications_user_id")
+  @@map("notifications")
+}

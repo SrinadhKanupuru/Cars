@@ -1,0 +1,43 @@
+{
+  "name": "speedx-motors-backend",
+  "version": "1.0.0",
+  "description": "SPEEDX MOTORS - Premium Sports Car Dealership System REST API",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "migrate": "node database/migrate.js",
+    "seed": "node database/seed.js",
+    "db:setup": "node database/setup.js",
+    "prisma:generate": "prisma generate",
+    "prisma:push": "prisma db push",
+    "prisma:pull": "prisma db pull",
+    "prisma:studio": "prisma studio"
+  },
+  "keywords": [
+    "speedx",
+    "sports-car",
+    "dealership",
+    "express",
+    "postgresql",
+    "jwt",
+    "api"
+  ],
+  "author": "SPEEDX MOTORS Engineering",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^6.4.1",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "jsonwebtoken": "^9.0.2",
+    "pg": "^8.13.1",
+    "prisma": "^6.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
