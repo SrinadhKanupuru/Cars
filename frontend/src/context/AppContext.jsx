@@ -1,17 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { initialCars } from '../data/cars';
-import { 
-  initialOrders, 
-  initialTestDrives, 
-  initialLeads, 
-  initialCustomers, 
-  initialPayments, 
-  initialServiceBookings, 
-  initialStaffUsers,
-  initialActivityLogs,
-  initialAdminStats 
-} from '../data/adminData';
-import { initialBookings, initialNotifications } from '../data/rentalBookingsData';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { 
   authAPI, 
   carsAPI, 
@@ -19,191 +6,45 @@ import {
   notificationsAPI, 
   leadsAPI, 
   testDrivesAPI, 
+  ordersAPI,
+  paymentsAPI,
+  customersAPI,
   servicesAPI 
 } from '../services/api';
 
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-  // State initialization with automatic sync to initialCars
-  const [cars, setCars] = useState(() => {
-    const saved = localStorage.getItem('speedx_cars_v5');
-    if (!saved) {
-      localStorage.removeItem('speedx_cars');
-      localStorage.removeItem('speedx_cars_v2');
-      localStorage.removeItem('speedx_cars_v3');
-      localStorage.removeItem('speedx_cars_v4');
-      localStorage.setItem('speedx_cars_v5', JSON.stringify(initialCars));
-      return initialCars;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length >= initialCars.length) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_cars_v5', JSON.stringify(initialCars));
-    return initialCars;
+  // Live State Initializations (No Dummy Data)
+  const [cars, setCars] = useState([]);
+  const [bookings, setBookings] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [orders, setOrders] = useState([]);
+  const [testDrives, setTestDrives] = useState([]);
+  const [leads, setLeads] = useState([]);
+  const [customers, setCustomers] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [serviceBookings, setServiceBookings] = useState([]);
+  const [staffUsers, setStaffUsers] = useState([]);
+  const [activityLogs, setActivityLogs] = useState([]);
+  const [adminStats, setAdminStats] = useState({
+    totalCars: 0,
+    totalCustomers: 0,
+    totalOrders: 0,
+    revenue: 0,
+    testDrives: 0
   });
 
   const [wishlist, setWishlist] = useState(() => {
-    const saved = localStorage.getItem('speedx_wishlist');
-    return saved ? JSON.parse(saved) : ["sf90-stradale", "911-gt3-rs"];
-  });
-
-  const [testDrives, setTestDrives] = useState(() => {
-    const saved = localStorage.getItem('speedx_test_drives_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_test_drives_v5', JSON.stringify(initialTestDrives));
-      return initialTestDrives;
-    }
     try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_test_drives_v5', JSON.stringify(initialTestDrives));
-    return initialTestDrives;
+      const saved = localStorage.getItem('speedx_wishlist');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
   });
 
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('speedx_orders_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_orders_v5', JSON.stringify(initialOrders));
-      return initialOrders;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_orders_v5', JSON.stringify(initialOrders));
-    return initialOrders;
-  });
-
-  const [leads, setLeads] = useState(() => {
-    const saved = localStorage.getItem('speedx_leads_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_leads_v5', JSON.stringify(initialLeads));
-      return initialLeads;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_leads_v5', JSON.stringify(initialLeads));
-    return initialLeads;
-  });
-
-  const [customers, setCustomers] = useState(() => {
-    const saved = localStorage.getItem('speedx_customers_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_customers_v5', JSON.stringify(initialCustomers));
-      return initialCustomers;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_customers_v5', JSON.stringify(initialCustomers));
-    return initialCustomers;
-  });
-
-  const [payments, setPayments] = useState(() => {
-    const saved = localStorage.getItem('speedx_payments_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_payments_v5', JSON.stringify(initialPayments));
-      return initialPayments;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_payments_v5', JSON.stringify(initialPayments));
-    return initialPayments;
-  });
-
-  const [serviceBookings, setServiceBookings] = useState(() => {
-    const saved = localStorage.getItem('speedx_services_v5');
-    if (!saved) {
-      localStorage.setItem('speedx_services_v5', JSON.stringify(initialServiceBookings));
-      return initialServiceBookings;
-    }
-    try {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed;
-      }
-    } catch (e) {}
-    localStorage.setItem('speedx_services_v5', JSON.stringify(initialServiceBookings));
-    return initialServiceBookings;
-  });
-
-  // Rental Bookings State (for Unified Dashboard) - clean initialized without dummy history
-  const [bookings, setBookings] = useState(() => {
-    const saved = localStorage.getItem('speedx_bookings_clean_v1');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {}
-    }
-    // Remove old dirty keys
-    localStorage.removeItem('speedx_bookings_v5');
-    localStorage.setItem('speedx_bookings_clean_v1', JSON.stringify(initialBookings));
-    return initialBookings;
-  });
-
-  // Notifications State (for Header & Dashboard)
-  const [notifications, setNotifications] = useState(() => {
-    const saved = localStorage.getItem('speedx_notifications_clean_v1');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) return parsed;
-      } catch (e) {}
-    }
-    localStorage.removeItem('speedx_notifications_v5');
-    localStorage.setItem('speedx_notifications_clean_v1', JSON.stringify(initialNotifications));
-    return initialNotifications;
-  });
-
-  const [staffUsers, setStaffUsers] = useState(initialStaffUsers);
-  const [activityLogs, setActivityLogs] = useState(initialActivityLogs);
-  const [adminStats, setAdminStats] = useState(initialAdminStats);
-
-  // System Admin account definition
-  const defaultUsers = [
-    {
-      id: "admin-1",
-      name: "Dealership Administrator",
-      email: "admin@speedxmotors.com",
-      phone: "+1 (800) SPEEDX-ADM",
-      password: "admin",
-      role: "admin",
-      membershipTier: "Dealership Principal"
-    }
-  ];
-
-  const [registeredUsers, setRegisteredUsers] = useState(() => {
-    const saved = localStorage.getItem('speedx_users_v6');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch (e) {}
-    }
-    localStorage.setItem('speedx_users_v6', JSON.stringify(defaultUsers));
-    return defaultUsers;
-  });
+  const [registeredUsers, setRegisteredUsers] = useState([]);
 
   // User session state (visitor / customer / admin)
   const [userRole, setUserRole] = useState(() => {
@@ -236,154 +77,106 @@ export function AppProvider({ children }) {
     setToasts(prev => prev.filter(t => t.id !== id));
   };
 
-  // Reset demo data helper
-  const resetDemoData = () => {
-    setTestDrives(initialTestDrives);
-    setOrders(initialOrders);
-    setLeads(initialLeads);
-    setCustomers(initialCustomers);
-    setPayments(initialPayments);
-    setServiceBookings(initialServiceBookings);
-    setCars(initialCars);
-    localStorage.setItem('speedx_test_drives_v5', JSON.stringify(initialTestDrives));
-    localStorage.setItem('speedx_orders_v5', JSON.stringify(initialOrders));
-    localStorage.setItem('speedx_leads_v5', JSON.stringify(initialLeads));
-    localStorage.setItem('speedx_customers_v5', JSON.stringify(initialCustomers));
-    localStorage.setItem('speedx_payments_v5', JSON.stringify(initialPayments));
-    localStorage.setItem('speedx_services_v5', JSON.stringify(initialServiceBookings));
-    localStorage.setItem('speedx_cars_v5', JSON.stringify(initialCars));
-    showToast("All sample data has been reset to dealership defaults!", "success");
-  };
-
-  // Sync to local storage
-  useEffect(() => {
-    localStorage.setItem('speedx_cars_v5', JSON.stringify(cars));
-  }, [cars]);
-
+  // Sync wishlist to local storage
   useEffect(() => {
     localStorage.setItem('speedx_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
   useEffect(() => {
-    localStorage.setItem('speedx_test_drives_v5', JSON.stringify(testDrives));
-  }, [testDrives]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_orders_v5', JSON.stringify(orders));
-  }, [orders]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_leads_v5', JSON.stringify(leads));
-  }, [leads]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_customers_v5', JSON.stringify(customers));
-  }, [customers]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_payments_v5', JSON.stringify(payments));
-  }, [payments]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_services_v5', JSON.stringify(serviceBookings));
-  }, [serviceBookings]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_bookings_clean_v1', JSON.stringify(bookings));
-  }, [bookings]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_notifications_clean_v1', JSON.stringify(notifications));
-  }, [notifications]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_users_v5', JSON.stringify(registeredUsers));
-  }, [registeredUsers]);
-
-  useEffect(() => {
-    localStorage.setItem('speedx_customer_profile_v5', JSON.stringify(customerProfile));
+    if (customerProfile) {
+      localStorage.setItem('speedx_customer_profile_v6', JSON.stringify(customerProfile));
+    } else {
+      localStorage.removeItem('speedx_customer_profile_v6');
+    }
   }, [customerProfile]);
 
   useEffect(() => {
     localStorage.setItem('speedx_user_role', userRole);
   }, [userRole]);
 
-  // Connect to Backend: Load Fleet Cars & Live Session on Mount
-  useEffect(() => {
-    let isMounted = true;
-
-    // 1. Fetch Fleet from PostgreSQL Backend
-    carsAPI.getAll({ limit: 100 })
-      .then(res => {
-        if (isMounted && res?.data && Array.isArray(res.data) && res.data.length > 0) {
-          const backendCars = res.data.map(c => ({
-            ...c,
-            price: Number(c.price) || 250000,
-            daily_rate: Number(c.daily_rate) || Math.round((Number(c.price) || 250000) / 160),
-            images: Array.isArray(c.images) && c.images.length > 0 ? c.images : [c.image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80'],
-            features: Array.isArray(c.features) ? c.features : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust']
-          }));
-          setCars(backendCars);
-        }
-      })
-      .catch(() => {});
-
-    // 2. Fetch authenticated session if valid token exists in storage
-    const syncSession = async () => {
-      try {
-        const token = localStorage.getItem('speedx_auth_token');
-        if (!token) {
-          if (userRole === 'visitor') {
-            setCustomerProfile(null);
-          }
-          return;
-        }
-
-        const authMeRes = await authAPI.getMe().catch(() => null);
-
-        if (isMounted && authMeRes?.data) {
-          const u = authMeRes.data?.user || authMeRes.data;
-          const role = (u.role || '').toLowerCase() === 'admin' ? 'admin' : 'customer';
-          setUserRole(role);
-          const profile = {
-            id: u.id,
-            name: u.name,
-            email: u.email,
-            phone: u.phone || '',
-            role: role,
-            membershipTier: u.membership_tier || u.membershipTier || (role === 'admin' ? 'Dealership Principal' : 'Platinum VIP Member')
-          };
-          setCustomerProfile(profile);
-
-          // Fetch Live Bookings & Notifications from PostgreSQL
-          if (role === 'admin') {
-            const bRes = await bookingsAPI.getAllAdmin().catch(() => null);
-            if (isMounted && bRes?.data && Array.isArray(bRes.data)) {
-              setBookings(bRes.data);
-            }
-          } else {
-            const bRes = await bookingsAPI.getMy().catch(() => null);
-            if (isMounted && bRes?.data && Array.isArray(bRes.data)) {
-              setBookings(bRes.data);
-            }
-          }
-
-          const nRes = await notificationsAPI.getAll().catch(() => null);
-          if (isMounted && nRes?.data && Array.isArray(nRes.data)) {
-            setNotifications(nRes.data);
-          }
-        }
-      } catch (err) {
-        console.warn('[SESSION SYNC]:', err.message);
+  // Load All Live Data Directly from PostgreSQL
+  const loadLiveData = useCallback(async () => {
+    try {
+      // 1. Fetch Fleet from PostgreSQL Backend
+      const carsRes = await carsAPI.getAll({ limit: 100 }).catch(() => null);
+      if (carsRes?.data && Array.isArray(carsRes.data)) {
+        const backendCars = carsRes.data.map(c => ({
+          ...c,
+          price: Number(c.price) || 250000,
+          daily_rate: Number(c.daily_rate) || Math.round((Number(c.price) || 250000) / 160),
+          images: Array.isArray(c.images) && c.images.length > 0 ? c.images : [c.image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80'],
+          features: Array.isArray(c.features) ? c.features : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust']
+        }));
+        setCars(backendCars);
       }
-    };
 
-    syncSession();
+      const token = localStorage.getItem('speedx_auth_token');
+      if (!token) return;
 
-    return () => {
-      isMounted = false;
-    };
+      const authMeRes = await authAPI.getMe().catch(() => null);
+      if (authMeRes?.data) {
+        const u = authMeRes.data?.user || authMeRes.data;
+        const role = (u.role || '').toLowerCase() === 'admin' ? 'admin' : 'customer';
+        setUserRole(role);
+        const profile = {
+          id: u.id,
+          name: u.name,
+          email: u.email,
+          phone: u.phone || '',
+          role: role,
+          membershipTier: u.membership_tier || u.membershipTier || (role === 'admin' ? 'Dealership Principal' : 'Platinum VIP Member')
+        };
+        setCustomerProfile(profile);
+
+        if (role === 'admin') {
+          // Admin Live Endpoints
+          const [bRes, oRes, lRes, tdRes, cRes, pRes, nRes] = await Promise.all([
+            bookingsAPI.getAllAdmin().catch(() => null),
+            ordersAPI.getAll().catch(() => null),
+            leadsAPI.getAll().catch(() => null),
+            testDrivesAPI.getAll().catch(() => null),
+            customersAPI.getAll().catch(() => null),
+            paymentsAPI.getAll().catch(() => null),
+            notificationsAPI.getAll().catch(() => null)
+          ]);
+
+          if (bRes?.data && Array.isArray(bRes.data)) setBookings(bRes.data);
+          if (oRes?.data && Array.isArray(oRes.data)) setOrders(oRes.data);
+          if (lRes?.data && Array.isArray(lRes.data)) setLeads(lRes.data);
+          if (tdRes?.data && Array.isArray(tdRes.data)) setTestDrives(tdRes.data);
+          if (cRes?.data && Array.isArray(cRes.data)) setCustomers(cRes.data);
+          if (pRes?.data && Array.isArray(pRes.data)) setPayments(pRes.data);
+          if (nRes?.data && Array.isArray(nRes.data)) setNotifications(nRes.data);
+        } else {
+          // Customer Live Endpoints
+          const [bRes, oRes, tdRes, nRes] = await Promise.all([
+            bookingsAPI.getMy().catch(() => null),
+            ordersAPI.getMy().catch(() => null),
+            testDrivesAPI.getMy().catch(() => null),
+            notificationsAPI.getAll().catch(() => null)
+          ]);
+
+          if (bRes?.data && Array.isArray(bRes.data)) setBookings(bRes.data);
+          if (oRes?.data && Array.isArray(oRes.data)) setOrders(oRes.data);
+          if (tdRes?.data && Array.isArray(tdRes.data)) setTestDrives(tdRes.data);
+          if (nRes?.data && Array.isArray(nRes.data)) setNotifications(nRes.data);
+        }
+      }
+    } catch (err) {
+      console.warn('[LIVE DATA LOAD ERROR]:', err.message);
+    }
   }, []);
+
+  // Fetch Live Data on mount
+  useEffect(() => {
+    loadLiveData();
+  }, [loadLiveData]);
+
+  // Clean data refresh helper
+  const resetDemoData = () => {
+    loadLiveData();
+    showToast("Synchronized live database records!", "info");
+  };
 
   // Unified Dashboard Rental Booking Management & Overlap Checking
   const checkBookingOverlap = (carId, pickupDateStr, returnDateStr, excludeBookingId = null) => {

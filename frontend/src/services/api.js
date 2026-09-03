@@ -184,22 +184,116 @@ export const notificationsAPI = {
 };
 
 // =============================================================================
+// ORDERS APIs
+// =============================================================================
+export const ordersAPI = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/orders');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
+  getMy: async () => {
+    try {
+      const response = await api.get('/orders/my');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
+  create: async (orderData) => {
+    const response = await api.post('/orders', orderData);
+    return response.data;
+  },
+  updateStatus: async (id, status) => {
+    const response = await api.put(`/orders/${id}/status`, { status });
+    return response.data;
+  }
+};
+
+// =============================================================================
+// PAYMENTS APIs
+// =============================================================================
+export const paymentsAPI = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/payments');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  }
+};
+
+// =============================================================================
+// CUSTOMERS APIs
+// =============================================================================
+export const customersAPI = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/customers');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
+  getMe: async () => {
+    try {
+      const response = await api.get('/customers/me');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
+  updateMe: async (profileData) => {
+    const response = await api.put('/customers/me', profileData);
+    return response.data;
+  }
+};
+
+// =============================================================================
 // LEADS & TEST DRIVES APIs
 // =============================================================================
 export const leadsAPI = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/leads');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
   create: async (leadData) => {
     const response = await api.post('/leads', leadData);
     return response.data;
   },
+  updateStatus: async (id, status) => {
+    const response = await api.put(`/leads/${id}/status`, { status });
+    return response.data;
+  }
 };
 
 export const testDrivesAPI = {
+  getAll: async () => {
+    try {
+      const response = await api.get('/test-drives');
+      return response.data;
+    } catch (err) {
+      return null;
+    }
+  },
   create: async (driveData) => {
     const response = await api.post('/test-drives', driveData);
     return response.data;
   },
   getMy: async () => {
     const response = await api.get('/test-drives/my');
+    return response.data;
+  },
+  updateStatus: async (id, status) => {
+    const response = await api.put(`/test-drives/${id}/status`, { status });
     return response.data;
   }
 };
