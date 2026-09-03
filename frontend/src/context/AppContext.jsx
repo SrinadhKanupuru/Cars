@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { initialCars } from '../data/cars';
 import { 
   authAPI, 
   carsAPI, 
@@ -15,8 +16,8 @@ import {
 const AppContext = createContext();
 
 export function AppProvider({ children }) {
-  // Live State Initializations (No Dummy Data)
-  const [cars, setCars] = useState([]);
+  // Showroom Fleet & Live State Initializations
+  const [cars, setCars] = useState(initialCars);
   const [bookings, setBookings] = useState([]);
   const [notifications, setNotifications] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -99,15 +100,34 @@ export function AppProvider({ children }) {
     try {
       // 1. Fetch Fleet from PostgreSQL Backend
       const carsRes = await carsAPI.getAll({ limit: 100 }).catch(() => null);
-      if (carsRes?.data && Array.isArray(carsRes.data)) {
-        const backendCars = carsRes.data.map(c => ({
-          ...c,
-          price: Number(c.price) || 250000,
-          daily_rate: Number(c.daily_rate) || Math.round((Number(c.price) || 250000) / 160),
-          images: Array.isArray(c.images) && c.images.length > 0 ? c.images : [c.image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80'],
-          features: Array.isArray(c.features) ? c.features : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust']
-        }));
+      if (carsRes?.data && Array.isArray(carsRes.data) && carsRes.data.length > 0) {
+        const backendCars = carsRes.data.map(c => {
+          let carImages = Array.isArray(c.images) && c.images.length > 0 
+            ? c.images 
+            : [c.image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80'];
+
+          // Auto-fix: Ensure Rolls-Royce Phantom VIII uses genuine Rolls-Royce photos
+          if (c.id === 'rolls-royce-phantom-viii' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('phantom'))) {
+            if (carImages[0]?.includes('1563720223185')) {
+              carImages = [
+                'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80',
+                'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80',
+                'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80'
+              ];
+            }
+          }
+
+          return {
+            ...c,
+            price: Number(c.price) || 250000,
+            daily_rate: Number(c.daily_rate) || Math.round((Number(c.price) || 250000) / 160),
+            images: carImages,
+            features: Array.isArray(c.features) ? c.features : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust']
+          };
+        });
         setCars(backendCars);
+      } else {
+        setCars(initialCars);
       }
 
       const token = localStorage.getItem('speedx_auth_token');
