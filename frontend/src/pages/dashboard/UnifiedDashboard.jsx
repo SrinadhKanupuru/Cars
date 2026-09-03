@@ -241,45 +241,67 @@ export function UnifiedDashboard() {
     return Array.from(new Set(cars.map(c => c.brand))).filter(Boolean);
   }, [cars]);
 
+  // Clean Date Formatter for ISO timestamps and date strings
+  const formatBookingDate = (dateStr) => {
+    if (!dateStr) return '—';
+    try {
+      const raw = String(dateStr).split('T')[0];
+      const parts = raw.split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const d = new Date(year, month, day);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+      }
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? raw : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch (e) {
+      return String(dateStr).split('T')[0];
+    }
+  };
+
   // Status Badge Helper
   const renderStatusBadge = (status) => {
     switch (status) {
       case 'Approved':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black uppercase tracking-wider border border-emerald-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-black uppercase tracking-wider border border-emerald-200 whitespace-nowrap">
             <CheckCircle2 className="w-3 h-3 text-emerald-600" />
             Approved
           </span>
         );
       case 'Pending':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-black uppercase tracking-wider border border-amber-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[11px] font-black uppercase tracking-wider border border-amber-200 whitespace-nowrap">
             <Clock className="w-3 h-3 text-amber-600" />
             Pending
           </span>
         );
       case 'Rejected':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[11px] font-black uppercase tracking-wider border border-rose-200">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-800 text-[11px] font-black uppercase tracking-wider border border-rose-200 whitespace-nowrap">
             <XCircle className="w-3 h-3 text-rose-600" />
             Rejected
           </span>
         );
       case 'Completed':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border border-slate-300">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold uppercase tracking-wider border border-slate-300 whitespace-nowrap">
             Completed
           </span>
         );
       case 'Cancelled':
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[11px] font-bold uppercase tracking-wider">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-600 text-[11px] font-bold uppercase tracking-wider whitespace-nowrap">
             Cancelled
           </span>
         );
       default:
         return (
-          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold whitespace-nowrap">
             {status}
           </span>
         );
@@ -1239,62 +1261,82 @@ export function UnifiedDashboard() {
                   <>
                     {/* Desktop Table View (md and above) */}
                     <div className="hidden md:block overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
+                      <table className="w-full min-w-[960px] text-left text-xs border-collapse">
                         <thead>
                           <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                            <th className="py-3 px-4">Booking ID</th>
-                            <th className="py-3 px-4">Customer Details</th>
-                            <th className="py-3 px-4">Vehicle</th>
-                            <th className="py-3 px-4">Pickup → Return</th>
-                            <th className="py-3 px-4">Pickup Location</th>
-                            <th className="py-3 px-4">Created Date</th>
-                            <th className="py-3 px-4 text-right">Decisions</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Booking ID</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Customer Details</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Vehicle</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Schedule</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Pickup Location</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Created Date</th>
+                            <th className="py-3.5 px-4 text-right whitespace-nowrap">Decisions</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {pendingBookingRequests.map(booking => (
                             <tr key={booking.id} className="hover:bg-slate-50/80 transition-colors">
-                              <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                                {booking.booking_code || booking.id}
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <span className="font-mono font-bold text-xs text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                                  {booking.booking_code || booking.id}
+                                </span>
                               </td>
-                              <td className="py-3.5 px-4">
-                                <p className="font-bold text-slate-900">{booking.user_name}</p>
-                                <p className="text-[10px] text-slate-500">{booking.user_email}</p>
-                                <p className="text-[10px] text-slate-400">{booking.phone}</p>
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <p className="font-bold text-slate-900">{booking.user_name || 'Guest VIP'}</p>
+                                <p className="text-[11px] text-slate-500">{booking.user_email || '—'}</p>
+                                <p className="text-[10px] text-slate-400">{booking.phone || '—'}</p>
                               </td>
-                              <td className="py-3.5 px-4">
-                                <span className="font-black text-amber-600 block">{booking.car_brand}</span>
-                                <span className="font-bold text-slate-900">{booking.car_model}</span>
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <div className="flex items-center gap-3">
+                                  <img
+                                    src={booking.car_image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=200&q=80'}
+                                    alt={booking.car_model}
+                                    className="w-12 h-9 rounded-lg object-cover border border-slate-200 shrink-0 shadow-2xs"
+                                  />
+                                  <div>
+                                    <span className="font-black text-amber-600 block">{booking.car_brand}</span>
+                                    <span className="font-bold text-slate-900">{booking.car_model}</span>
+                                  </div>
+                                </div>
                               </td>
-                              <td className="py-3.5 px-4 font-semibold text-slate-700">
-                                {booking.pickup_date} → {booking.return_date}
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/80 w-fit">
+                                  <Calendar className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                                  <span>{formatBookingDate(booking.pickup_date)}</span>
+                                  <span className="text-slate-400 font-bold">→</span>
+                                  <span>{formatBookingDate(booking.return_date)}</span>
+                                </div>
                               </td>
-                              <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">
-                                {booking.pickup_location}
+                              <td className="py-4 px-4 whitespace-nowrap text-slate-600">
+                                <div className="flex items-center gap-1.5" title={booking.pickup_location}>
+                                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                  <span className="max-w-[200px] truncate">{booking.pickup_location || 'Dealership Showroom Sanctuary'}</span>
+                                </div>
                               </td>
-                              <td className="py-3.5 px-4 text-slate-400 text-[11px]">
-                                {booking.created_at ? new Date(booking.created_at).toLocaleDateString() : 'Today'}
+                              <td className="py-4 px-4 whitespace-nowrap text-slate-500 text-[11px] font-medium">
+                                {formatBookingDate(booking.created_at)}
                               </td>
-                              <td className="py-3.5 px-4 text-right">
+                              <td className="py-4 px-4 text-right whitespace-nowrap">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
                                     type="button"
                                     onClick={() => setSelectedBookingForDetails(booking)}
-                                    className="py-1.5 px-3 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all shadow-2xs cursor-pointer"
+                                    className="py-1.5 px-3 rounded-xl border border-slate-200 hover:bg-slate-100 text-slate-700 font-bold text-xs transition-all shadow-2xs cursor-pointer inline-flex items-center gap-1.5 whitespace-nowrap"
                                   >
-                                    View Details
+                                    <Eye className="w-3.5 h-3.5 text-slate-500" />
+                                    <span>Details</span>
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => approveRentalBooking(booking.id)}
-                                    className="py-1.5 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                    className="py-1.5 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer whitespace-nowrap"
                                   >
                                     Accept
                                   </button>
                                   <button
                                     type="button"
                                     onClick={() => setSelectedBookingForReject(booking)}
-                                    className="py-1.5 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer"
+                                    className="py-1.5 px-3.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all cursor-pointer whitespace-nowrap"
                                   >
                                     Reject
                                   </button>
@@ -1325,7 +1367,7 @@ export function UnifiedDashboard() {
                             <div className="text-xs text-slate-600 mt-2 space-y-1 bg-white p-2.5 rounded-xl border border-amber-100">
                               <p><strong className="text-slate-800">Client:</strong> {booking.user_name} ({booking.user_email})</p>
                               <p><strong className="text-slate-800">Phone:</strong> {booking.phone}</p>
-                              <p><strong className="text-slate-800">Schedule:</strong> {booking.pickup_date} → {booking.return_date}</p>
+                              <p><strong className="text-slate-800">Schedule:</strong> {formatBookingDate(booking.pickup_date)} → {formatBookingDate(booking.return_date)}</p>
                               <p><strong className="text-slate-800">Pickup:</strong> {booking.pickup_location}</p>
                             </div>
                           </div>
@@ -1334,9 +1376,10 @@ export function UnifiedDashboard() {
                             <button
                               type="button"
                               onClick={() => setSelectedBookingForDetails(booking)}
-                              className="py-2 px-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs text-center cursor-pointer"
+                              className="py-2 px-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 font-bold text-xs text-center cursor-pointer inline-flex items-center justify-center gap-1"
                             >
-                              Details
+                              <Eye className="w-3.5 h-3.5" />
+                              <span>Details</span>
                             </button>
                             <button
                               type="button"
@@ -1442,60 +1485,71 @@ export function UnifiedDashboard() {
                   <>
                     {/* Desktop Table View (md and above) */}
                     <div className="hidden md:block overflow-x-auto">
-                      <table className="w-full text-left text-xs border-collapse">
+                      <table className="w-full min-w-[960px] text-left text-xs border-collapse">
                         <thead>
                           <tr className="bg-slate-50 border-b border-slate-200 text-[10px] font-black uppercase tracking-wider text-slate-500">
-                            <th className="py-3 px-4">Booking ID</th>
-                            <th className="py-3 px-4">Vehicle</th>
-                            {isAdmin && <th className="py-3 px-4">Customer</th>}
-                            <th className="py-3 px-4">Schedule</th>
-                            <th className="py-3 px-4">Pickup Location</th>
-                            <th className="py-3 px-4">Status</th>
-                            <th className="py-3 px-4 text-right">Actions</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Booking ID</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Vehicle</th>
+                            {isAdmin && <th className="py-3.5 px-4 whitespace-nowrap">Customer</th>}
+                            <th className="py-3.5 px-4 whitespace-nowrap">Schedule</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Pickup Location</th>
+                            <th className="py-3.5 px-4 whitespace-nowrap">Status</th>
+                            <th className="py-3.5 px-4 text-right whitespace-nowrap">Actions</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-100">
                           {filteredBookings.map(booking => (
                             <tr key={booking.id} className="hover:bg-slate-50/80 transition-colors">
-                              <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                                {booking.booking_code || booking.id}
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <span className="font-mono font-bold text-xs text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200 shadow-2xs">
+                                  {booking.booking_code || booking.id}
+                                </span>
                               </td>
-                              <td className="py-3.5 px-4">
+                              <td className="py-4 px-4 whitespace-nowrap">
                                 <div className="flex items-center gap-3">
                                   <img
                                     src={booking.car_image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=200&q=80'}
                                     alt={booking.car_model}
-                                    className="w-12 h-9 rounded-lg object-cover border border-slate-200 shrink-0"
+                                    className="w-12 h-9 rounded-lg object-cover border border-slate-200 shrink-0 shadow-2xs"
                                   />
                                   <div>
-                                    <span className="font-bold text-amber-600 block">{booking.car_brand}</span>
+                                    <span className="font-black text-amber-600 block">{booking.car_brand}</span>
                                     <span className="font-bold text-slate-900">{booking.car_model}</span>
                                   </div>
                                 </div>
                               </td>
                               {isAdmin && (
-                                <td className="py-3.5 px-4">
-                                  <p className="font-bold text-slate-900">{booking.user_name}</p>
-                                  <p className="text-[10px] text-slate-400">{booking.user_email}</p>
+                                <td className="py-4 px-4 whitespace-nowrap">
+                                  <p className="font-bold text-slate-900">{booking.user_name || 'Guest VIP'}</p>
+                                  <p className="text-[11px] text-slate-400">{booking.user_email || '—'}</p>
                                 </td>
                               )}
-                              <td className="py-3.5 px-4 font-semibold text-slate-700">
-                                {booking.pickup_date} → {booking.return_date}
+                              <td className="py-4 px-4 whitespace-nowrap">
+                                <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-700 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-200/80 w-fit">
+                                  <Calendar className="w-3.5 h-3.5 text-amber-500 shrink-0" />
+                                  <span>{formatBookingDate(booking.pickup_date)}</span>
+                                  <span className="text-slate-400 font-bold">→</span>
+                                  <span>{formatBookingDate(booking.return_date)}</span>
+                                </div>
                               </td>
-                              <td className="py-3.5 px-4 text-slate-600 max-w-[180px] truncate">
-                                {booking.pickup_location}
+                              <td className="py-4 px-4 whitespace-nowrap text-slate-600">
+                                <div className="flex items-center gap-1.5" title={booking.pickup_location}>
+                                  <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                  <span className="max-w-[200px] truncate">{booking.pickup_location || 'Beverly Hills Showroom Sanctuary'}</span>
+                                </div>
                               </td>
-                              <td className="py-3.5 px-4">
+                              <td className="py-4 px-4 whitespace-nowrap">
                                 {renderStatusBadge(booking.status)}
                               </td>
-                              <td className="py-3.5 px-4 text-right">
+                              <td className="py-4 px-4 text-right whitespace-nowrap">
                                 <div className="flex items-center justify-end gap-2">
                                   <button
                                     type="button"
                                     onClick={() => setSelectedBookingForDetails(booking)}
-                                    className="py-1.5 px-3.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-2xs cursor-pointer"
+                                    className="py-2 px-4 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider transition-all shadow-2xs cursor-pointer whitespace-nowrap inline-flex items-center gap-1.5 hover:scale-102"
                                   >
-                                    View Details
+                                    <Eye className="w-3.5 h-3.5 text-amber-400" />
+                                    <span>View Details</span>
                                   </button>
                                   {isAdmin && booking.status === 'Approved' && (
                                     <button
@@ -1505,7 +1559,7 @@ export function UnifiedDashboard() {
                                           completeRentalBooking(booking.id);
                                         }
                                       }}
-                                      className="py-1.5 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all flex items-center gap-1 cursor-pointer hover:scale-102"
+                                      className="py-2 px-3.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider shadow-sm transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap hover:scale-102"
                                       title="Complete rental and return vehicle to available fleet"
                                     >
                                       <CheckCircle2 className="w-3.5 h-3.5" />
@@ -1551,7 +1605,7 @@ export function UnifiedDashboard() {
                           <div className="grid grid-cols-2 gap-2 text-[11px] bg-white p-2.5 rounded-xl border border-slate-100">
                             <div>
                               <span className="text-[9px] font-bold text-slate-400 uppercase block">Schedule</span>
-                              <span className="font-semibold text-slate-800">{booking.pickup_date} → {booking.return_date}</span>
+                              <span className="font-semibold text-slate-800">{formatBookingDate(booking.pickup_date)} → {formatBookingDate(booking.return_date)}</span>
                             </div>
                             <div>
                               <span className="text-[9px] font-bold text-slate-400 uppercase block">Location</span>
@@ -1563,22 +1617,22 @@ export function UnifiedDashboard() {
                             <button
                               type="button"
                               onClick={() => setSelectedBookingForDetails(booking)}
-                              className="flex-1 py-2 px-3 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider text-center cursor-pointer"
+                              className="flex-1 py-2.5 px-3 rounded-xl bg-slate-950 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider text-center cursor-pointer inline-flex items-center justify-center gap-1.5"
                             >
-                              View Details
+                              <Eye className="w-3.5 h-3.5 text-amber-400" />
+                              <span>View Details</span>
                             </button>
                             {isAdmin && booking.status === 'Approved' && (
                               <button
                                 type="button"
                                 onClick={() => {
-                                  if (window.confirm(`Mark rental for ${booking.car_brand} ${booking.car_model} as Completed?`)) {
+                                  if (window.confirm(`Mark rental for ${booking.car_brand} ${booking.car_model} as Completed and return vehicle to Available fleet?`)) {
                                     completeRentalBooking(booking.id);
                                   }
                                 }}
-                                className="flex-1 py-2 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase tracking-wider text-center flex items-center justify-center gap-1 cursor-pointer"
+                                className="py-2.5 px-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs uppercase text-center cursor-pointer"
                               >
-                                <CheckCircle2 className="w-3.5 h-3.5" />
-                                <span>Complete</span>
+                                Complete
                               </button>
                             )}
                           </div>

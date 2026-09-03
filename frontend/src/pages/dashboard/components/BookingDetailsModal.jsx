@@ -64,6 +64,27 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onCancelBooking,
     }
   };
 
+  const formatBookingDate = (dateStr) => {
+    if (!dateStr) return '—';
+    try {
+      const raw = String(dateStr).split('T')[0];
+      const parts = raw.split('-');
+      if (parts.length === 3) {
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+        const d = new Date(year, month, day);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+      }
+      const d = new Date(dateStr);
+      return isNaN(d.getTime()) ? raw : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    } catch (e) {
+      return String(dateStr).split('T')[0];
+    }
+  };
+
   const calculateDays = () => {
     if (!booking.pickup_date || !booking.return_date) return 1;
     const start = new Date(booking.pickup_date);
@@ -95,7 +116,7 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onCancelBooking,
           <div className="text-right">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Created On</span>
             <span className="text-xs font-bold text-slate-700">
-              {booking.created_at ? new Date(booking.created_at).toLocaleDateString() : 'Recent'}
+              {formatBookingDate(booking.created_at)}
             </span>
           </div>
         </div>
@@ -147,11 +168,11 @@ export function BookingDetailsModal({ isOpen, onClose, booking, onCancelBooking,
             <div className="space-y-1 text-slate-600">
               <div className="flex justify-between">
                 <span>Pickup Date:</span>
-                <span className="font-bold text-slate-900">{booking.pickup_date}</span>
+                <span className="font-bold text-slate-900">{formatBookingDate(booking.pickup_date)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Return Date:</span>
-                <span className="font-bold text-slate-900">{booking.return_date}</span>
+                <span className="font-bold text-slate-900">{formatBookingDate(booking.return_date)}</span>
               </div>
               <div className="flex justify-between pt-1 border-t border-slate-200">
                 <span>Duration:</span>
