@@ -766,9 +766,9 @@ export const initialCars = [
     rating: 5.0,
     vin: "SCA684S51PUX08192",
     images: [
-      "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80"
+      "/rolls-royce-phantom-red.jpg",
+      "/rolls-royce-wraith-red.jpg",
+      "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80"
     ],
     features: [
       "Shooting Star Starlight Headliner",

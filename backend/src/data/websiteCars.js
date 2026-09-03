@@ -513,7 +513,7 @@ export const websiteCars = [
       "Massive 5.98-meter vehicle length requires professional chauffeur navigation",
       "Substantial fuel consumption in city environments"
     ],
-    image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80",
+    image: "/rolls-royce-phantom-red.jpg",
     description: "The Rolls-Royce Phantom VIII Extended is the quintessential definition of luxury motoring, featuring 130 kg of acoustic insulation, a 6.75L twin-turbo V12, Shooting Star headliner, and magic carpet air suspension."
   },
   {
