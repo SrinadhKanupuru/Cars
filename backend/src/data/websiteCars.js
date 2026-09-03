@@ -513,7 +513,7 @@ export const websiteCars = [
       "Massive 5.98-meter vehicle length requires professional chauffeur navigation",
       "Substantial fuel consumption in city environments"
     ],
-    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
+    image: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80",
     description: "The Rolls-Royce Phantom VIII Extended is the quintessential definition of luxury motoring, featuring 130 kg of acoustic insulation, a 6.75L twin-turbo V12, Shooting Star headliner, and magic carpet air suspension."
   },
   {
@@ -557,7 +557,7 @@ export const websiteCars = [
       "Heavy curb weight of nearly 3,000 kg",
       "Exclusivity means multi-year waiting lists for custom bespoke orders"
     ],
-    image: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80",
+    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
     description: "The Rolls-Royce Spectre is the marque's first fully electric ultra-luxury coupe, delivering 577 hp of whisper-silent thrust, 530 km of range, Starlight Doors, and Planar suspension magic."
   },
   {

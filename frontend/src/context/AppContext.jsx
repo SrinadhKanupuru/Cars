@@ -106,15 +106,22 @@ export function AppProvider({ children }) {
             ? c.images 
             : [c.image || 'https://images.unsplash.com/photo-1544829099-b9a0c07fad1a?auto=format&fit=crop&w=1600&q=80'];
 
-          // Auto-fix: Ensure Rolls-Royce Phantom VIII uses genuine Rolls-Royce photos
+          // Auto-fix: Ensure Rolls-Royce Phantom VIII uses its distinct dark executive sedan photo
           if (c.id === 'rolls-royce-phantom-viii' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('phantom'))) {
-            if (carImages[0]?.includes('1563720223185')) {
-              carImages = [
-                'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80',
-                'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80',
-                'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80'
-              ];
-            }
+            carImages = [
+              'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1600&q=80'
+            ];
+          }
+
+          // Auto-fix: Ensure Rolls-Royce Spectre uses its distinct two-tone electric coupe photo
+          if (c.id === 'rolls-royce-spectre' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('spectre'))) {
+            carImages = [
+              'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80'
+            ];
           }
 
           return {
