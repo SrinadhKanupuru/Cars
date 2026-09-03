@@ -557,8 +557,51 @@ export const websiteCars = [
       "Heavy curb weight of nearly 3,000 kg",
       "Exclusivity means multi-year waiting lists for custom bespoke orders"
     ],
-    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
+    image: "/rolls-royce-wraith-red.jpg",
     description: "The Rolls-Royce Spectre is the marque's first fully electric ultra-luxury coupe, delivering 577 hp of whisper-silent thrust, 530 km of range, Starlight Doors, and Planar suspension magic."
+  },
+  {
+    id: "rolls-royce-wraith-black-badge",
+    brand: "Rolls-Royce",
+    model: "Wraith",
+    variant: "Black Badge Grand Tourer",
+    year: 2024,
+    price: "$460,000 (Approx ₹8.20 Crore)",
+    priceNumeric: 82000000,
+    fuelType: "Petrol",
+    engine: "6.6L Twin-Turbocharged 48-Valve V12",
+    transmission: "8-Speed Satellite Aided Automatic (SAT)",
+    power: "624 bhp @ 5600 rpm",
+    torque: "870 Nm @ 1500 rpm",
+    mileage: "7.1 km/l",
+    range: "Approx. 600 km",
+    seatingCapacity: 4,
+    bootSpace: "470 Litres",
+    groundClearance: "150 mm",
+    safetyFeatures: [
+      "Night Vision Assistant with Thermal Imaging and Pedestrian Warning",
+      "Adaptive Cruise Control with Stop & Go",
+      "Full Surround Multi-Angle Cameras",
+      "Reinforced Spaceframe Architecture with Carbon Fibre Accents"
+    ],
+    features: [
+      "Bespoke Starlight Headliner with Custom Constellation Patterns",
+      "Black Badge Technical Carbon Fibre Veneers",
+      "Power-Assisted Suicide Coach Doors with Teflon-Coated Umbrellas",
+      "1300W 18-Speaker Rolls-Royce Bespoke Audio System",
+      "Dark Chrome Spirit of Ecstasy and Iconic Pantheon Grille"
+    ],
+    pros: [
+      "Most powerful and dynamic driving Rolls-Royce ever engineered",
+      "Breathtaking two-tone Crimson Velvet and Jubilee Silver road presence",
+      "Unrivaled whisper-quiet V12 acceleration"
+    ],
+    cons: [
+      "Rear seat access requires door swinging clearance",
+      "High bespoke maintenance requirements"
+    ],
+    image: "/rolls-royce-wraith-red.jpg",
+    description: "The Rolls-Royce Wraith Black Badge is the most powerful and driver-focused luxury grand tourer crafted in Goodwood, featuring 624 hp twin-turbo V12 power and bespoke crimson styling."
   },
   {
     id: "range-rover-sv-autobiography",

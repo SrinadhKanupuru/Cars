@@ -115,12 +115,21 @@ export function AppProvider({ children }) {
             ];
           }
 
-          // Auto-fix: Ensure Rolls-Royce Spectre uses its distinct two-tone electric coupe photo
+          // Auto-fix: Ensure Rolls-Royce Spectre uses its distinct photo
           if (c.id === 'rolls-royce-spectre' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('spectre'))) {
             carImages = [
+              '/rolls-royce-wraith-red.jpg',
               'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80',
-              'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80',
-              'https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80'
+              'https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80'
+            ];
+          }
+
+          // Auto-fix: Ensure Rolls-Royce Wraith Black Badge uses the uploaded crimson showroom photo
+          if (c.id === 'rolls-royce-wraith-black-badge' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('wraith'))) {
+            carImages = [
+              '/rolls-royce-wraith-red.jpg',
+              'https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80'
             ];
           }
 
