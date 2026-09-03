@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Modal } from '../../../components/ui/Modal';
 import { Button } from '../../../components/ui/Button';
-import { Plus, Edit2, Sparkles, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit2, Sparkles, Image as ImageIcon, UploadCloud, Link as LinkIcon, Check, X } from 'lucide-react';
 
 export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
   const isEditing = !!carToEdit;
+  const fileInputRef = useRef(null);
+
+  const [imageInputMode, setImageInputMode] = useState('upload'); // 'upload' | 'url'
+  const [uploadedFileName, setUploadedFileName] = useState('');
+  const [isDragging, setIsDragging] = useState(false);
 
   const [formData, setFormData] = useState({
     brand: '',
@@ -41,6 +46,7 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
         availability: carToEdit.availability || carToEdit.status || 'Available',
         imageUrl: carToEdit.images?.[0] || 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80'
       });
+      setUploadedFileName('');
     } else {
       setFormData({
         brand: 'Ferrari',
@@ -58,8 +64,53 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
         availability: 'Available',
         imageUrl: 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80'
       });
+      setUploadedFileName('');
     }
   }, [carToEdit, isOpen]);
+
+  // Local File Upload Reader
+  const processFile = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      alert("Please upload a valid image file (PNG, JPG, JPEG, WEBP).");
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      alert("Image size exceeds 8MB. Please select a smaller photo.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const base64Str = uploadEvent.target?.result;
+      if (base64Str) {
+        setFormData(prev => ({ ...prev, imageUrl: base64Str }));
+        setUploadedFileName(file.name);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files?.[0];
+    processFile(file);
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => {
+    setIsDragging(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const file = e.dataTransfer.files?.[0];
+    processFile(file);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -229,25 +280,107 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
           </div>
         </div>
 
-        <div>
-          <label className="text-xs font-bold text-slate-700 block mb-1">Primary Image URL *</label>
-          <div className="flex gap-2">
-            <input
-              type="url"
-              required
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              placeholder="https://images.unsplash.com/..."
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
-            />
-            {formData.imageUrl && (
-              <img
-                src={formData.imageUrl}
-                alt="Preview"
-                className="w-10 h-9 rounded-lg object-cover border border-slate-200 shrink-0"
-              />
-            )}
+        {/* Image Source Selection */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-bold text-slate-700 block">Vehicle Photo *</label>
+            <div className="inline-flex rounded-lg bg-slate-100 p-0.5 text-[11px] font-bold">
+              <button
+                type="button"
+                onClick={() => setImageInputMode('upload')}
+                className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+                  imageInputMode === 'upload' ? 'bg-white text-slate-900 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <UploadCloud className="w-3.5 h-3.5 text-amber-500" />
+                <span>Upload File</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setImageInputMode('url')}
+                className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
+                  imageInputMode === 'url' ? 'bg-white text-slate-900 shadow-sm font-black' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <LinkIcon className="w-3.5 h-3.5 text-blue-500" />
+                <span>Image URL</span>
+              </button>
+            </div>
           </div>
+
+          {imageInputMode === 'upload' ? (
+            <div>
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/png, image/jpeg, image/jpg, image/webp"
+                className="hidden"
+              />
+
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`border-2 border-dashed rounded-2xl p-4 text-center cursor-pointer transition-all ${
+                  isDragging 
+                    ? 'border-amber-500 bg-amber-50/50 scale-[1.01]' 
+                    : 'border-slate-200 bg-slate-50/80 hover:bg-slate-100 hover:border-slate-300'
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                  {formData.imageUrl ? (
+                    <div className="relative group shrink-0">
+                      <img
+                        src={formData.imageUrl}
+                        alt="Vehicle Preview"
+                        className="w-20 h-14 object-cover rounded-xl border border-slate-200 shadow-sm"
+                      />
+                      <span className="absolute -top-1.5 -right-1.5 bg-emerald-500 text-white rounded-full p-0.5">
+                        <Check className="w-3 h-3" />
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="w-12 h-12 rounded-xl bg-amber-100/80 text-amber-600 flex items-center justify-center shrink-0">
+                      <UploadCloud className="w-6 h-6" />
+                    </div>
+                  )}
+
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-slate-800">
+                      {uploadedFileName ? (
+                        <span className="text-amber-600 truncate block max-w-xs">{uploadedFileName}</span>
+                      ) : (
+                        "Click to choose local photo or drag & drop"
+                      )}
+                    </p>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      Supports PNG, JPG, JPEG, WEBP (up to 8MB)
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <input
+                type="url"
+                required
+                value={formData.imageUrl}
+                onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                placeholder="https://images.unsplash.com/..."
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+              />
+              {formData.imageUrl && (
+                <img
+                  src={formData.imageUrl}
+                  alt="Preview"
+                  className="w-10 h-9 rounded-lg object-cover border border-slate-200 shrink-0"
+                />
+              )}
+            </div>
+          )}
         </div>
 
         <div>
