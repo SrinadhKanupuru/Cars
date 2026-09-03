@@ -8,6 +8,7 @@ import { successResponse, errorResponse } from '../utils/response.js';
  * - Checks for overlapping Pending or Approved bookings for the same car
  * - Sets status = 'Pending'
  * - Creates an Admin notification
+ * - Sends email to customer
  */
 export const createBooking = async (req, res) => {
   try {
@@ -306,7 +307,7 @@ export const approveBooking = async (req, res) => {
       if (carRes.rows.length > 0) {
         carName = `${carRes.rows[0].brand} ${carRes.rows[0].model}`;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Send notification to the user
     if (updatedBooking.user_id) {
@@ -365,7 +366,7 @@ export const rejectBooking = async (req, res) => {
       if (carRes.rows.length > 0) {
         carName = `${carRes.rows[0].brand} ${carRes.rows[0].model}`;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Send notification to the user
     if (updatedBooking.user_id) {
@@ -446,7 +447,7 @@ export const completeBooking = async (req, res) => {
     // Mark car as Available again
     try {
       await query("UPDATE cars SET availability = 'Available' WHERE id = $1", [updatedBooking.car_id]);
-    } catch (e) {}
+    } catch (e) { }
 
     // Fetch car details for notification
     let carName = updatedBooking.car_id;
@@ -455,7 +456,7 @@ export const completeBooking = async (req, res) => {
       if (carRes.rows.length > 0) {
         carName = `${carRes.rows[0].brand} ${carRes.rows[0].model}`;
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Send notification to the user
     if (updatedBooking.user_id) {
