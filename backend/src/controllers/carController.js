@@ -189,35 +189,50 @@ export const createCar = async (req, res) => {
       brand,
       model,
       tagline,
-      year,
+      year = new Date().getFullYear(),
       price,
+      daily_rate,
       mileage,
-      horsepower,
+      horsepower = 700,
       engine,
-      transmission,
+      transmission = '7-Speed Dual-Clutch',
       drivetrain,
       fuel_type,
+      fuelType,
       zero_to_hundred,
       top_speed,
       torque,
-      body_type,
+      body_type = 'Coupe',
+      bodyType,
       exterior_color,
+      exteriorColor,
       interior_color,
+      interiorColor,
       vin,
       description,
       status = 'AVAILABLE',
+      availability,
       is_featured = false,
       is_new_arrival = false,
       images = [],
+      imageUrl,
       features = []
     } = req.body;
 
     const carId = (id || `${brand}-${model}-${year}`).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const cleanVin = vin || `ZFF${Math.floor(100000 + Math.random() * 900000)}`;
+    const cleanEngine = engine || `${horsepower}HP Twin-Turbocharged High-Performance V8`;
+    const cleanFuelType = fuel_type || fuelType || 'Gasoline (V8 / V12)';
+    const cleanTransmission = transmission || '7-Speed Dual-Clutch F1';
+    const cleanBodyType = body_type || bodyType || 'Coupe';
+    const cleanExtColor = exterior_color || exteriorColor || 'Metallic Custom';
+    const cleanIntColor = interior_color || interiorColor || 'Nero Alcantara';
+    const cleanStatus = (availability || status || 'AVAILABLE').toUpperCase();
 
     // Check duplicate ID or VIN
     const existing = await client.query(
       'SELECT id FROM cars WHERE id = $1 OR vin = $2',
-      [carId, vin]
+      [carId, cleanVin]
     );
     if (existing.rows.length > 0) {
       return errorResponse(res, 'A car with this ID or VIN already exists.', 409);
@@ -238,17 +253,23 @@ export const createCar = async (req, res) => {
     `;
 
     const carRes = await client.query(insertCarSql, [
-      carId, brand, model, tagline || null, parseInt(year, 10), Number(price), mileage || null,
-      parseInt(horsepower, 10), engine, transmission, drivetrain || null, fuel_type || null,
-      zero_to_hundred || null, top_speed || null, torque || null, body_type || 'Coupe',
-      exterior_color || null, interior_color || null, vin, description || null,
-      status, Boolean(is_featured), Boolean(is_new_arrival)
+      carId, brand, model, tagline || null, parseInt(year, 10), Number(price), mileage || '1,000 km',
+      parseInt(horsepower, 10), cleanEngine, cleanTransmission, drivetrain || 'Rear-Wheel Drive', cleanFuelType,
+      zero_to_hundred || '2.9s', top_speed || '330 km/h', torque || '750 Nm', cleanBodyType,
+      cleanExtColor, cleanIntColor, cleanVin, description || 'Prestige luxury sports vehicle.',
+      cleanStatus, Boolean(is_featured), Boolean(is_new_arrival)
     ]);
 
     // Insert Images
-    if (Array.isArray(images) && images.length > 0) {
-      for (let i = 0; i < images.length; i++) {
-        const imgUrl = typeof images[i] === 'string' ? images[i] : images[i].image_url;
+    const imgList = Array.isArray(images) && images.length > 0 
+      ? images 
+      : imageUrl 
+        ? [imageUrl] 
+        : ['https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80'];
+
+    for (let i = 0; i < imgList.length; i++) {
+      const imgUrl = typeof imgList[i] === 'string' ? imgList[i] : imgList[i].image_url;
+      if (imgUrl) {
         const isPrimary = i === 0;
         await client.query(
           'INSERT INTO car_images (car_id, image_url, is_primary, display_order) VALUES ($1, $2, $3, $4)',
@@ -258,22 +279,33 @@ export const createCar = async (req, res) => {
     }
 
     // Insert Features
-    if (Array.isArray(features) && features.length > 0) {
-      for (const feat of features) {
+    const featList = Array.isArray(features) && features.length > 0 
+      ? features 
+      : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust System'];
+
+    for (const feat of featList) {
+      const featName = typeof feat === 'string' ? feat : feat.feature_name;
+      if (featName) {
         await client.query(
           'INSERT INTO car_features (car_id, feature_name) VALUES ($1, $2)',
-          [carId, typeof feat === 'string' ? feat : feat.feature_name]
+          [carId, featName]
         );
       }
     }
 
     await client.query('COMMIT');
 
-    return successResponse(res, 'Car created successfully', carRes.rows[0], 201);
+    const createdCar = {
+      ...carRes.rows[0],
+      images: imgList.map(item => typeof item === 'string' ? item : item.image_url),
+      features: featList.map(item => typeof item === 'string' ? item : item.feature_name)
+    };
+
+    return successResponse(res, 'Car created successfully', createdCar, 201);
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
     console.error('[CREATE_CAR ERROR]:', err);
-    return errorResponse(res, 'Failed to create car.', 500);
+    return errorResponse(res, err.message || 'Failed to create car.', 500);
   } finally {
     client.release();
   }

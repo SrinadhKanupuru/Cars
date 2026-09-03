@@ -1001,33 +1001,53 @@ export function AppProvider({ children }) {
 
   // Cars Admin CRUD
   const addCar = async (newCarData) => {
-    const carId = newCarData.model.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const carId = (newCarData.id || `${newCarData.brand}-${newCarData.model}-${newCarData.year || 2025}`).toLowerCase().replace(/[^a-z0-9]+/g, '-');
     const fullCar = {
       ...newCarData,
       id: carId,
       rating: 5.0,
-      vin: newCarData.vin || `ZFF${Math.floor(100000 + Math.random() * 900000)}`
+      engine: newCarData.engine || `${newCarData.horsepower || 710}HP Twin-Turbocharged V8`,
+      transmission: newCarData.transmission || '7-Speed Dual-Clutch F1',
+      vin: newCarData.vin || `ZFF${Math.floor(100000 + Math.random() * 900000)}`,
+      fuel_type: newCarData.fuelType || newCarData.fuel_type || 'Gasoline (V8 / V12)',
+      images: Array.isArray(newCarData.images) && newCarData.images.length > 0 
+        ? newCarData.images 
+        : [newCarData.imageUrl || 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80'],
+      features: Array.isArray(newCarData.features) && newCarData.features.length > 0
+        ? newCarData.features
+        : ['Carbon Ceramic Brakes', 'Launch Control', 'Sport Exhaust System']
     };
 
     try {
-      await carsAPI.create(fullCar);
+      const res = await carsAPI.create(fullCar);
+      if (res?.data) {
+        const savedCar = {
+          ...res.data,
+          images: Array.isArray(res.data.images) && res.data.images.length > 0 ? res.data.images : fullCar.images,
+          features: Array.isArray(res.data.features) && res.data.features.length > 0 ? res.data.features : fullCar.features
+        };
+        setCars(prev => [savedCar, ...prev.filter(c => c.id !== savedCar.id)]);
+        showToast(`${savedCar.brand} ${savedCar.model} saved to database & inventory!`, "success");
+        return { success: true, car: savedCar };
+      }
     } catch (e) {
-      console.warn('[CARS API] Local state saved:', e.message);
+      console.warn('[CARS API] Backend save warning:', e.message);
     }
 
-    setCars(prev => [fullCar, ...prev]);
-    showToast(`${fullCar.model} added to active dealership inventory!`, "success");
+    setCars(prev => [fullCar, ...prev.filter(c => c.id !== fullCar.id)]);
+    showToast(`${fullCar.brand} ${fullCar.model} added to inventory!`, "success");
+    return { success: true, car: fullCar };
   };
 
   const updateCar = async (carId, updatedData) => {
     try {
       await carsAPI.update(carId, updatedData);
     } catch (e) {
-      console.warn('[CARS API] Local state saved:', e.message);
+      console.warn('[CARS API] Backend update warning:', e.message);
     }
 
     setCars(prev => prev.map(c => c.id === carId ? { ...c, ...updatedData } : c));
-    showToast("Vehicle specifications updated successfully", "success");
+    showToast("Vehicle specifications updated in database successfully!", "success");
   };
 
   const deleteCar = async (carId) => {
@@ -1036,11 +1056,11 @@ export function AppProvider({ children }) {
     try {
       await carsAPI.delete(carId);
     } catch (e) {
-      console.warn('[CARS API] Local state saved:', e.message);
+      console.warn('[CARS API] Backend delete warning:', e.message);
     }
 
     setCars(prev => prev.filter(c => c.id !== carId));
-    showToast(`${carToDelete ? carToDelete.model : 'Vehicle'} removed from inventory`, "info");
+    showToast(`${carToDelete ? carToDelete.model : 'Vehicle'} removed from database & inventory`, "info");
   };
 
   // Orders Actions

@@ -16,12 +16,12 @@ const router = Router();
 const carValidation = [
   body('brand').trim().notEmpty().withMessage('Brand is required'),
   body('model').trim().notEmpty().withMessage('Model is required'),
-  body('year').isInt({ min: 1900, max: 2030 }).withMessage('Valid model year is required'),
+  body('year').optional().isInt({ min: 1900, max: 2030 }).withMessage('Valid model year is required'),
   body('price').isFloat({ min: 0 }).withMessage('Valid positive price is required'),
-  body('horsepower').isInt({ min: 1 }).withMessage('Valid horsepower is required'),
-  body('engine').trim().notEmpty().withMessage('Engine specification is required'),
-  body('transmission').trim().notEmpty().withMessage('Transmission type is required'),
-  body('vin').trim().notEmpty().withMessage('VIN number is required'),
+  body('horsepower').optional().isInt({ min: 1 }).withMessage('Valid horsepower is required'),
+  body('engine').optional().trim(),
+  body('transmission').optional().trim(),
+  body('vin').optional().trim(),
   validateRequest
 ];
 

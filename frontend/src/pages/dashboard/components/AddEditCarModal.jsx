@@ -12,6 +12,7 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
     year: new Date().getFullYear(),
     price: 350000,
     daily_rate: 1950,
+    engine: '4.0L Twin-Turbocharged V8',
     fuelType: 'Gasoline (V8 / V12)',
     transmission: '7-Speed Dual-Clutch F1',
     horsepower: 710,
@@ -30,13 +31,14 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
         year: carToEdit.year || 2025,
         price: carToEdit.price || 350000,
         daily_rate: carToEdit.daily_rate || (carToEdit.price ? Math.round(carToEdit.price / 160) : 1950),
-        fuelType: carToEdit.fuelType || 'Gasoline (V8 / V12)',
+        engine: carToEdit.engine || '4.0L Twin-Turbocharged V8',
+        fuelType: carToEdit.fuelType || carToEdit.fuel_type || 'Gasoline (V8 / V12)',
         transmission: carToEdit.transmission || 'Dual-Clutch',
         horsepower: carToEdit.horsepower || 700,
         seats: carToEdit.seats || 2,
         mileage: carToEdit.mileage || '1,000 km',
         description: carToEdit.description || 'Showroom certified supercar.',
-        availability: carToEdit.availability || 'Available',
+        availability: carToEdit.availability || carToEdit.status || 'Available',
         imageUrl: carToEdit.images?.[0] || 'https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1600&q=80'
       });
     } else {
@@ -46,6 +48,7 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
         year: new Date().getFullYear(),
         price: 350000,
         daily_rate: 1950,
+        engine: '4.0L Twin-Turbocharged V8',
         fuelType: 'Gasoline (V8 / V12)',
         transmission: '7-Speed Dual-Clutch F1',
         horsepower: 710,
@@ -68,13 +71,17 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
       year: parseInt(formData.year, 10),
       price: parseFloat(formData.price),
       daily_rate: parseFloat(formData.daily_rate),
+      engine: formData.engine.trim() || `${formData.horsepower}HP High-Performance V8`,
       fuelType: formData.fuelType,
+      fuel_type: formData.fuelType,
       transmission: formData.transmission,
       horsepower: parseInt(formData.horsepower, 10),
       seats: parseInt(formData.seats, 10),
       mileage: formData.mileage,
       description: formData.description,
       availability: formData.availability,
+      status: formData.availability.toUpperCase(),
+      imageUrl: formData.imageUrl,
       images: [formData.imageUrl, ...(carToEdit?.images?.slice(1) || [])]
     };
 
@@ -153,6 +160,30 @@ export function AddEditCarModal({ isOpen, onClose, carToEdit, onSaveCar }) {
               required
               value={formData.daily_rate}
               onChange={(e) => setFormData({ ...formData, daily_rate: parseFloat(e.target.value) || 0 })}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Engine Specification</label>
+            <input
+              type="text"
+              value={formData.engine}
+              onChange={(e) => setFormData({ ...formData, engine: e.target.value })}
+              placeholder="e.g. 3.9L Twin-Turbo V8"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-slate-700 block mb-1">Fuel & Powertrain</label>
+            <input
+              type="text"
+              value={formData.fuelType}
+              onChange={(e) => setFormData({ ...formData, fuelType: e.target.value })}
+              placeholder="e.g. Gasoline (V8 / V12) or Hybrid"
               className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-900 focus:outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>
