@@ -18,6 +18,10 @@ export const register = async (req, res) => {
   try {
     const { name, email, password, phone, address, city, country } = req.body;
 
+    if (!name || !email || !password) {
+      return errorResponse(res, 'Name, email, and password are required.', 400);
+    }
+
     // Check duplicate email
     const existing = await client.query('SELECT id FROM users WHERE email = $1', [email.toLowerCase().trim()]);
     if (existing.rows.length > 0) {
@@ -30,9 +34,30 @@ export const register = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash(password, salt);
 
-    // Get CUSTOMER role id
-    const roleRes = await client.query("SELECT id FROM roles WHERE name = 'CUSTOMER'");
-    const roleId = roleRes.rows[0]?.id || 2;
+    // Ensure Roles exist in case database wasn't fully seeded
+    let roleId = 2;
+    try {
+      const roleRes = await client.query("SELECT id FROM roles WHERE UPPER(name) = 'CUSTOMER'");
+      if (roleRes.rows.length > 0) {
+        roleId = roleRes.rows[0].id;
+      } else {
+        await client.query(`
+          INSERT INTO roles (id, name, description) VALUES 
+          (1, 'ADMIN', 'Dealership Management & Principal Admin'),
+          (2, 'CUSTOMER', 'VIP Client & Private Collector')
+          ON CONFLICT (id) DO NOTHING
+        `);
+        const retryRole = await client.query("SELECT id FROM roles WHERE UPPER(name) = 'CUSTOMER'");
+        roleId = retryRole.rows[0]?.id || 2;
+      }
+    } catch (rErr) {
+      console.warn('[REGISTER] Roles check warning:', rErr.message);
+    }
+
+    // Sync users_id_seq if manual seed previously inserted explicit IDs
+    try {
+      await client.query(`SELECT setval('users_id_seq', COALESCE((SELECT MAX(id) FROM users), 1))`);
+    } catch (seqErr) {}
 
     // Insert user
     const insertUserRes = await client.query(
@@ -44,24 +69,37 @@ export const register = async (req, res) => {
     const newUser = insertUserRes.rows[0];
 
     // Create customer profile
-    await client.query(
-      `INSERT INTO customers (user_id, address, city, country, membership_tier)
-       VALUES ($1, $2, $3, $4, 'Gold Apex Collector')`,
-      [newUser.id, address || null, city || null, country || null]
-    );
+    try {
+      await client.query(
+        `INSERT INTO customers (user_id, address, city, country, membership_tier)
+         VALUES ($1, $2, $3, $4, 'Gold Apex Collector')
+         ON CONFLICT (user_id) DO NOTHING`,
+        [newUser.id, address || null, city || null, country || null]
+      );
+    } catch (custErr) {
+      console.warn('[REGISTER] Customers profile creation warning:', custErr.message);
+    }
 
     // Create empty wishlist
-    await client.query(
-      `INSERT INTO wishlists (user_id) VALUES ($1) ON CONFLICT DO NOTHING`,
-      [newUser.id]
-    );
+    try {
+      await client.query(
+        `INSERT INTO wishlists (user_id) VALUES ($1) ON CONFLICT DO NOTHING`,
+        [newUser.id]
+      );
+    } catch (wlErr) {
+      console.warn('[REGISTER] Wishlist creation warning:', wlErr.message);
+    }
 
     // Welcome Notification
-    await client.query(
-      `INSERT INTO notifications (user_id, title, message, type)
-       VALUES ($1, 'Welcome to SPEEDX MOTORS VIP Portal', 'Your luxury sports car acquisition dossier has been activated.', 'SUCCESS')`,
-      [newUser.id]
-    );
+    try {
+      await client.query(
+        `INSERT INTO notifications (user_id, title, message, type)
+         VALUES ($1, 'Welcome to SPEEDX MOTORS VIP Portal', 'Your luxury sports car acquisition dossier has been activated.', 'SUCCESS')`,
+        [newUser.id]
+      );
+    } catch (notifErr) {
+      console.warn('[REGISTER] Notification creation warning:', notifErr.message);
+    }
 
     await client.query('COMMIT');
 
@@ -86,7 +124,7 @@ export const register = async (req, res) => {
   } catch (err) {
     await client.query('ROLLBACK').catch(() => {});
     console.error('[REGISTER ERROR]:', err);
-    return errorResponse(res, 'Registration failed.', 500);
+    return errorResponse(res, err.message || 'Registration failed.', 500);
   } finally {
     client.release();
   }
