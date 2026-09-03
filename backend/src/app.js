@@ -29,20 +29,52 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const app = express();
 
 // CORS Configuration
-const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:5174';
+const parseAllowedOrigins = () => {
+  const envOrigins = process.env.FRONTEND_URL 
+    ? process.env.FRONTEND_URL.split(',').map((url) => url.trim()) 
+    : [];
+  return [
+    ...envOrigins,
+    'https://cars-srinadh3.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
+  ].filter(Boolean);
+};
+
+const allowedOrigins = parseAllowedOrigins();
+
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman) or matching FRONTEND_URL
-      if (!origin || origin === allowedOrigin || origin.startsWith('http://localhost:')) {
-        callback(null, true);
-      } else {
-        callback(new Error('CORS policy: Access denied for this origin.'));
+      // Allow requests with no origin (like mobile apps, curl, postman)
+      if (!origin) return callback(null, true);
+
+      // Allow if exact match in allowedOrigins list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
+
+      // Allow all vercel.app domains (production + preview deployments)
+      if (origin.endsWith('.vercel.app')) {
+        return callback(null, true);
+      }
+
+      // Allow all railway.app domains
+      if (origin.endsWith('.railway.app')) {
+        return callback(null, true);
+      }
+
+      // Allow any localhost development port
+      if (origin.startsWith('http://localhost:')) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS policy: Access denied for origin ${origin}`));
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
   })
 );
 
