@@ -8,7 +8,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000',
+        target: 'https://cars-production-a657.up.railway.app',
         changeOrigin: true,
         secure: false,
       }
