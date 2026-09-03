@@ -124,6 +124,15 @@ export function AppProvider({ children }) {
             ];
           }
 
+          // Auto-fix: Ensure McLaren 750S Spider uses the uploaded Papaya Orange McLaren photo
+          if (c.id === 'mclaren-750s-spider' || c.brand?.toLowerCase() === 'mclaren') {
+            carImages = [
+              '/mclaren-750s-spider.jpg',
+              'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80',
+              'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1600&q=80'
+            ];
+          }
+
           // Auto-fix: Ensure Rolls-Royce Wraith Black Badge uses the uploaded crimson showroom photo
           if (c.id === 'rolls-royce-wraith-black-badge' || (c.brand?.toLowerCase() === 'rolls-royce' && c.model?.toLowerCase().includes('wraith'))) {
             carImages = [

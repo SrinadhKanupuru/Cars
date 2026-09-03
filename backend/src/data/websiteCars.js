@@ -688,6 +688,49 @@ export const websiteCars = [
     ],
     image: "https://images.unsplash.com/photo-1555215695-3004980ad54e?auto=format&fit=crop&w=1600&q=80",
     description: "Re-igniting the legendary CSL designation for BMW M's 50th anniversary, the M4 CSL is 100 kg lighter, delivers 543 hp, and set the fastest Nürburgring lap time of any production BMW."
+  },
+  {
+    id: "mclaren-750s-spider",
+    brand: "McLaren",
+    model: "750S Spider",
+    variant: "Super-Lightweight Open-Top Supercar",
+    year: 2024,
+    price: "$415,000 (Approx ₹7.40 Crore)",
+    priceNumeric: 74000000,
+    fuelType: "Petrol",
+    engine: "4.0L Twin-Turbocharged M840T 32-Valve V8",
+    transmission: "7-Speed Seamless Shift Gearbox (SSG) with Launch Control",
+    power: "740 bhp (750 PS) @ 7500 rpm",
+    torque: "800 Nm @ 5500 rpm",
+    mileage: "8.2 km/l",
+    range: "Approx. 520 km",
+    seatingCapacity: 2,
+    bootSpace: "210 Litres (Front + Rear Luggage)",
+    groundClearance: "107 mm (147 mm with Vehicle Lift)",
+    safetyFeatures: [
+      "Carbon Fibre Monocage II-S Architecture",
+      "Proactive Chassis Control III (PCC III)",
+      "Carbon Ceramic Brakes with 6-Piston Calipers",
+      "Dynamic Electronic Stability Control (Variable Drift Control)"
+    ],
+    features: [
+      "Retractable Hard Top (11-second open/close at up to 50 km/h)",
+      "Papaya Spark Bespoke Metallic Coachwork",
+      "Super-Lightweight Carbon Fiber Bucket Racing Seats",
+      "Bowers & Wilkins 12-Speaker High-End Audio System",
+      "Sports Exhaust with Center-Exit Stainless Steel Tips"
+    ],
+    pros: [
+      "Lightest and most ferocious series-production supercar in its class",
+      "Immediate 740 hp twin-turbo V8 throttle response and 2.8s 0-100 sprint",
+      "Stunning open-air spider roofline with electrochromic glass"
+    ],
+    cons: [
+      "Extremely low ride height requires vehicle lift for steep ramps",
+      "Compact luggage storage capacity"
+    ],
+    image: "/mclaren-750s-spider.jpg",
+    description: "The McLaren 750S Spider is the lightest, most agile series-production supercar from Woking, boasting 740 hp, an 11-second retractable hardtop, and pure race-bred dynamics."
   }
 ];
 
