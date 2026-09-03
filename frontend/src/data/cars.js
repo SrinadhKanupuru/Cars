@@ -430,9 +430,9 @@ export const initialCars = [
     vin: "SBM14RAB7NW001923",
     images: [
       "/mclaren-750s-spider.jpg",
+      "/mclaren-p1-hypercar.jpg",
       "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1553440569-bcc63803a83d?auto=format&fit=crop&w=1600&q=80"
+      "https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1600&q=80"
     ],
     features: [
       "Retractable Hard Top (11-second operation at up to 50 km/h)",
@@ -445,6 +445,46 @@ export const initialCars = [
       "Track Telemetry App with Dual Cameras"
     ],
     description: "The McLaren 750S Spider is the lightest, most agile series-production supercar from Woking. Boasting 30 hp more and 30 kg less weight than its predecessor."
+  },
+  {
+    id: "mclaren-p1-hypercar",
+    brand: "McLaren",
+    model: "P1 Hybrid Hypercar",
+    tagline: "The Holy Trinity Definitive Aerodynamic Hybrid Weapon",
+    year: 2024,
+    price: 1650000,
+    daily_rate: 6500,
+    mileage: "850 km",
+    horsepower: 903,
+    engine: "3.8L Twin-Turbo V8 with IPAS Hybrid Electric Motor",
+    transmission: "7-Speed Seamless Shift Dual-Clutch SSG",
+    drivetrain: "Rear-Wheel Drive",
+    fuelType: "Hybrid",
+    zeroToHundred: "2.8s",
+    topSpeed: "350 km/h",
+    torque: "900 Nm",
+    bodyType: "Hypercar",
+    exteriorColor: "Alaskan Diamond White with Heritage Papaya Accents",
+    interiorColor: "Lightweight Carbon Fibre with Papaya Alcantara",
+    availability: "Available",
+    isFeatured: true,
+    isNewArrival: true,
+    rating: 5.0,
+    vin: "SBM11AAA5EW000375",
+    images: [
+      "/mclaren-p1-hypercar.jpg",
+      "/mclaren-750s-spider.jpg",
+      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80"
+    ],
+    features: [
+      "Formula 1 Instant Power Assist System (IPAS)",
+      "Active Aerodynamic DRS (Drag Reduction System) Rear Wing",
+      "RaceActive Chassis Control (RACC) with 50mm Ride Drop in Race Mode",
+      "Carbon Ceramic Formula 1 Akebono Monobloc Brakes",
+      "MonoCage Full Carbon Fiber Passenger Cell",
+      "Meridian 380W High-Fidelity Audio System"
+    ],
+    description: "The McLaren P1 is a towering technological triumph of modern hypercar engineering. Combining a 727 hp twin-turbo V8 with an electric motor for a total output of 903 hp and 600 kg of downforce."
   },
   {
     id: "aston-martin-dbs-770",

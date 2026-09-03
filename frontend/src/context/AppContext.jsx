@@ -125,11 +125,20 @@ export function AppProvider({ children }) {
           }
 
           // Auto-fix: Ensure McLaren 750S Spider uses the uploaded Papaya Orange McLaren photo
-          if (c.id === 'mclaren-750s-spider' || c.brand?.toLowerCase() === 'mclaren') {
+          if (c.id === 'mclaren-750s-spider' || (c.brand?.toLowerCase() === 'mclaren' && c.model?.toLowerCase().includes('750s'))) {
             carImages = [
               '/mclaren-750s-spider.jpg',
-              'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80',
-              'https://images.unsplash.com/photo-1502877338535-766e1452684a?auto=format&fit=crop&w=1600&q=80'
+              '/mclaren-p1-hypercar.jpg',
+              'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80'
+            ];
+          }
+
+          // Auto-fix: Ensure McLaren P1 Hypercar uses the uploaded showroom hypercar photo
+          if (c.id === 'mclaren-p1-hypercar' || (c.brand?.toLowerCase() === 'mclaren' && (c.model?.toLowerCase().includes('p1') || c.model?.toLowerCase().includes('hypercar')))) {
+            carImages = [
+              '/mclaren-p1-hypercar.jpg',
+              '/mclaren-750s-spider.jpg',
+              'https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80'
             ];
           }
 

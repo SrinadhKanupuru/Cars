@@ -731,6 +731,49 @@ export const websiteCars = [
     ],
     image: "/mclaren-750s-spider.jpg",
     description: "The McLaren 750S Spider is the lightest, most agile series-production supercar from Woking, boasting 740 hp, an 11-second retractable hardtop, and pure race-bred dynamics."
+  },
+  {
+    id: "mclaren-p1-hypercar",
+    brand: "McLaren",
+    model: "P1",
+    variant: "Hybrid Hypercar IPAS",
+    year: 2024,
+    price: "$1,650,000 (Approx ₹29.50 Crore)",
+    priceNumeric: 295000000,
+    fuelType: "Hybrid",
+    engine: "3.8L Twin-Turbocharged V8 with Formula 1 Instant Power Assist (IPAS)",
+    transmission: "7-Speed Dual-Clutch SSG with Race Mode",
+    power: "903 bhp (916 PS) Combined",
+    torque: "900 Nm Instant Torque",
+    mileage: "7.0 km/l",
+    range: "Approx. 530 km (with pure EV mode)",
+    seatingCapacity: 2,
+    bootSpace: "120 Litres",
+    groundClearance: "120 mm (50 mm in Race Mode)",
+    safetyFeatures: [
+      "Formula 1 Akebono Carbon Ceramic Discs with Silicon Carbide",
+      "MonoCage Full Carbon Fiber Passenger Safety Cell",
+      "Active Aerodynamic DRS Wing generating 600kg downforce",
+      "RaceActive Chassis Control (RACC)"
+    ],
+    features: [
+      "Formula 1 Instant Power Assist System (IPAS)",
+      "Active DRS (Drag Reduction System) Steering Wheel Controls",
+      "Alaskan Diamond White with Heritage Papaya Accents",
+      "Exposed Carbon Fibre Front Aero Splitter & Rear Wing",
+      "Meridian High-End Bespoke Sound Suite"
+    ],
+    pros: [
+      "One of the iconic 'Holy Trinity' defining the pinnacle of hybrid hypercars",
+      "Monumental 903 hp output with 600 kg race-level downforce",
+      "Ultra-exclusive limited collector hypercar pedigree"
+    ],
+    cons: [
+      "Extremely rare and exclusive collector acquisition",
+      "Dedicated track-specialized maintenance support"
+    ],
+    image: "/mclaren-p1-hypercar.jpg",
+    description: "The McLaren P1 is a monumental hybrid hypercar combining a 727 hp twin-turbo V8 with an electric motor for 903 hp and Formula 1 aerodynamic wizardry."
   }
 ];
 
