@@ -211,21 +211,6 @@ export function Home() {
           </div>
         </div>
 
-        {/* Hero Footer Tagline & Scroll Indicator */}
-        <div className={`w-full max-w-[1680px] mx-auto px-4 sm:px-6 lg:px-12 pt-6 relative z-20 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-amber-500/20 transition-all duration-1000 delay-1000 ${
-          showContent ? 'opacity-100' : 'opacity-0'
-        }`}>
-          <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-slate-400 text-center sm:text-left">
-            TOP-QUALITY AUTOMOTIVE PRODUCTS, ENGINEERED FOR PERFORMANCE
-          </p>
-          <div className="flex items-center gap-2 text-slate-400 text-xs font-semibold">
-            <span className="text-[10px] uppercase tracking-wider text-amber-400 font-mono">SCROLL DOWN</span>
-            <div className="w-6 h-6 rounded-full border border-amber-400/40 flex items-center justify-center text-amber-400 animate-bounce">
-              ↓
-            </div>
-          </div>
-        </div>
-
       </section>
 
       {/* ========================================================================= */}
