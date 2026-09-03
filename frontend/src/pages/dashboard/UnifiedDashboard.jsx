@@ -1970,15 +1970,7 @@ export function UnifiedDashboard() {
                     </select>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
-                    <button
-                      type="button"
-                      onClick={() => handleTabChange('overview')}
-                      className="py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5"
-                    >
-                      <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
-                      <span>Return</span>
-                    </button>
+                  <div className="pt-4 border-t border-slate-100 flex justify-end">
                     <button
                       type="submit"
                       className="py-3 px-6 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md shadow-amber-400/20 transition-all cursor-pointer"
