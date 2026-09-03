@@ -747,6 +747,7 @@ export const initialCars = [
     tagline: "The Absolute Pinnacle of Bespoke Opulence",
     year: 2024,
     price: 585000,
+    daily_rate: 3200,
     mileage: "450 km",
     horsepower: 563,
     engine: "6.75L Twin-Turbocharged V12",
@@ -765,9 +766,9 @@ export const initialCars = [
     rating: 5.0,
     vin: "SCA684S51PUX08192",
     images: [
-      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
       "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80"
+      "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=1600&q=80"
     ],
     features: [
       "Shooting Star Starlight Headliner",
@@ -788,6 +789,7 @@ export const initialCars = [
     tagline: "An All-Electric Prophecy Fulfilled",
     year: 2024,
     price: 420000,
+    daily_rate: 2600,
     mileage: "820 km",
     horsepower: 577,
     engine: "Dual Electric Motors (102 kWh Battery)",
@@ -807,8 +809,8 @@ export const initialCars = [
     vin: "SCA688D02RU004921",
     images: [
       "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
-      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80"
+      "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=1600&q=80"
     ],
     features: [
       "4,796 Illuminated Fibre-Optic Stars in Doors & Headliner",
@@ -821,5 +823,45 @@ export const initialCars = [
       "Active 4-Wheel Steering"
     ],
     description: "The Rolls-Royce Spectre is the marque's first fully electric ultra-luxury super coupe. Delivering 577 hp of instantaneous, whisper-silent thrust with Starlight Doors and Planar magic carpet suspension."
+  },
+  {
+    id: "range-rover-sv-autobiography",
+    brand: "Land Rover",
+    model: "Range Rover SV Autobiography",
+    tagline: "Peerless British All-Terrain Luxury and V8 Dominance",
+    year: 2024,
+    price: 245000,
+    daily_rate: 1550,
+    mileage: "1,100 km",
+    horsepower: 606,
+    engine: "4.4L Twin-Turbocharged V8",
+    transmission: "8-Speed Automatic with CommandShift",
+    drivetrain: "Intelligent All-Wheel Drive (iAWD)",
+    fuelType: "Petrol",
+    zeroToHundred: "4.4s",
+    topSpeed: "261 km/h",
+    torque: "750 Nm",
+    bodyType: "Luxury SUV",
+    exteriorColor: "Santorini Black with Corinthian Bronze Accents",
+    interiorColor: "Perlino & Caraway Semi-Aniline Leather with Satin Walnut",
+    availability: "Available",
+    isFeatured: true,
+    isNewArrival: true,
+    rating: 4.95,
+    vin: "SALWR2V45RA091823",
+    images: [
+      "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=1600&q=80",
+      "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?auto=format&fit=crop&w=1600&q=80"
+    ],
+    features: [
+      "SV Serenity 24-Way Heated & Cooled Massage Executive Rear Seats",
+      "Meridian Signature 35-Speaker 1600W 3D Surround System",
+      "Electronic Air Suspension with Dynamic Response Pro & All-Wheel Steering",
+      "Terrain Response 2 with Configurable Off-Road Dynamics",
+      "Electrically Deployable Club Tables with Integrated Refrigerator",
+      "Pixel LED Headlights with Signature DRL & Soft-Close Doors"
+    ],
+    description: "The Range Rover SV Autobiography is the crowning pinnacle of luxury SUVs. Powered by a 606 hp 4.4L twin-turbo V8, combining whisper-quiet highway composure with legendary all-terrain capability."
   }
 ];

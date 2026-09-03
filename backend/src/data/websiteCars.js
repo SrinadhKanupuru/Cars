@@ -513,7 +513,7 @@ export const websiteCars = [
       "Massive 5.98-meter vehicle length requires professional chauffeur navigation",
       "Substantial fuel consumption in city environments"
     ],
-    image: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
+    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
     description: "The Rolls-Royce Phantom VIII Extended is the quintessential definition of luxury motoring, featuring 130 kg of acoustic insulation, a 6.75L twin-turbo V12, Shooting Star headliner, and magic carpet air suspension."
   },
   {
@@ -557,8 +557,51 @@ export const websiteCars = [
       "Heavy curb weight of nearly 3,000 kg",
       "Exclusivity means multi-year waiting lists for custom bespoke orders"
     ],
-    image: "https://images.unsplash.com/photo-1631295868223-63265b40d9e4?auto=format&fit=crop&w=1600&q=80",
+    image: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=1600&q=80",
     description: "The Rolls-Royce Spectre is the marque's first fully electric ultra-luxury coupe, delivering 577 hp of whisper-silent thrust, 530 km of range, Starlight Doors, and Planar suspension magic."
+  },
+  {
+    id: "range-rover-sv-autobiography",
+    brand: "Land Rover",
+    model: "Range Rover SV Autobiography",
+    variant: "Long Wheelbase Ultra-Luxury Flagship SUV",
+    year: 2024,
+    price: "$245,000 (Approx ₹4.40 Crore)",
+    priceNumeric: 44000000,
+    fuelType: "Petrol",
+    engine: "4.4L Twin-Turbocharged 32-Valve V8",
+    transmission: "8-Speed Automatic with CommandShift & Low-Range Transfer Box",
+    power: "606 bhp @ 6000 rpm",
+    torque: "750 Nm @ 1800 rpm",
+    mileage: "8.5 km/l",
+    range: "Approx. 720 km",
+    seatingCapacity: 4,
+    bootSpace: "812 Litres",
+    groundClearance: "295 mm (Off-road mode)",
+    safetyFeatures: [
+      "Dynamic Response Pro Active Roll Control",
+      "All-Wheel Steering with 7.3-degree Rear Steer Angle",
+      "3D Surround Camera with Wade Sensing up to 900mm",
+      "Blind Spot Assist and ClearSight Rear View Mirror"
+    ],
+    features: [
+      "SV Serenity 24-Way Heated & Cooled Massage Executive Rear Lounge",
+      "Meridian Signature 35-Speaker 1600W 3D Surround Audio System",
+      "Electronic Air Suspension with Predictive Road Scanning",
+      "Electrically Deployable Club Table and Integrated Champagne Refrigerator",
+      "Terrain Response 2 with Configurable Off-Road Dynamics"
+    ],
+    pros: [
+      "Unrivaled combination of serene limousine luxury and unstoppable off-road capability",
+      "Monster 606 hp Twin-Turbo V8 acceleration",
+      "Opulent executive rear cabin with deployable club tables"
+    ],
+    cons: [
+      "Substantial physical dimensions for tight parking structures",
+      "High insurance and bespoke servicing requirements"
+    ],
+    image: "https://images.unsplash.com/photo-1563720223185-11003d516935?auto=format&fit=crop&w=1600&q=80",
+    description: "The Range Rover SV Autobiography is the crowning pinnacle of luxury SUVs, powered by a 606 hp 4.4L twin-turbo V8, combining whisper-quiet highway composure with legendary all-terrain capability."
   },
   {
     id: "bmw-m4-csl",
