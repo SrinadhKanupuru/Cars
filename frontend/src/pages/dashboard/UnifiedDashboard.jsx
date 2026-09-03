@@ -1862,13 +1862,32 @@ export function UnifiedDashboard() {
           {/* ================================================================= */}
           {activeTab === 'profile' && (
             <div className="space-y-6 animate-fade-in max-w-2xl mx-auto">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-black text-slate-950 font-display">
-                  Profile Specifications
-                </h1>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Update your contact details, membership tier, and communication preferences.
-                </p>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <button
+                    type="button"
+                    onClick={() => handleTabChange('overview')}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-slate-500 hover:text-slate-950 transition-colors mb-2 cursor-pointer group"
+                  >
+                    <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform text-amber-500" />
+                    <span>Return to Overview</span>
+                  </button>
+                  <h1 className="text-2xl sm:text-3xl font-black text-slate-950 font-display">
+                    Profile Specifications
+                  </h1>
+                  <p className="text-xs text-slate-500 mt-0.5">
+                    Update your contact details, membership tier, and communication preferences.
+                  </p>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={() => handleTabChange('overview')}
+                  className="hidden sm:inline-flex items-center gap-1.5 py-2 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all shadow-2xs cursor-pointer"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
+                  <span>Return</span>
+                </button>
               </div>
 
               <div className="bg-white rounded-3xl border border-slate-200/90 p-6 sm:p-8 shadow-luxury space-y-6">
@@ -1951,7 +1970,15 @@ export function UnifiedDashboard() {
                     </select>
                   </div>
 
-                  <div className="pt-4 border-t border-slate-100 flex justify-end">
+                  <div className="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                    <button
+                      type="button"
+                      onClick={() => handleTabChange('overview')}
+                      className="py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs transition-all cursor-pointer inline-flex items-center gap-1.5"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5 text-slate-500" />
+                      <span>Return</span>
+                    </button>
                     <button
                       type="submit"
                       className="py-3 px-6 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-wider shadow-md shadow-amber-400/20 transition-all cursor-pointer"
